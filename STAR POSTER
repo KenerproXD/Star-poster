@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* First part of original styles remain exactly the same until the black hole section */
+        body {
+            font-family: Arial, sans-serif;
+            background: #000033;
+            margin: 0;
+            padding: 20px;
+            color: white;
+            line-height: 1.6;
+        }
+        .poster {
+            max-width: 1400px;
+            margin: auto;
+            background: linear-gradient(45deg, #000066, #000033);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        .title-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .title {
+            font-size: 3em;
+            color: #FFD700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+        .subtitle {
+            color: #00ffff;
+            font-size: 1.2em;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+        .section {
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #4444ff;
+            transition: transform 0.3s;
+        }
+        .section:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+        .section h2 {
+            color: #00ffff;
+            margin-top: 0;
+            border-bottom: 2px solid #4444ff;
+            padding-bottom: 10px;
+        }
+        .star-types {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .star {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: relative;
+        }
+        .star::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 20px currentColor;
+        }
+        .massive-star {
+            background: #0066ff;
+            color: #0066ff;
+        }
+        .small-star {
+            background: #ff6600;
+            color: #ff6600;
+        }
+        .fact-box {
+            background: rgba(0,0,100,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #00ffff;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table td {
+            padding: 12px;
+            border: 1px solid #4444ff;
+        }
+        .highlight {
+            color: #ff9900;
+            font-weight: bold;
+        }
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+            margin: 20px 0;
+        }
+        .timeline-item {
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '•';
+            color: #00ffff;
+            position: absolute;
+            left: -5px;
+            font-size: 24px;
+        }
+/* Enhanced black hole styles with fixes */
+        .blackhole-container {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: radial-gradient(circle at center, #000033, #000000);
+            margin: 15px 0;
+            perspective: 1000px;
+        }
+
+        .blackhole {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at center, 
+                rgba(0,0,0,1) 0%,
+                rgba(0,0,51,0.8) 50%,
+                rgba(0,0,102,0.4) 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 
+                0 0 50px rgba(0,0,0,0.8),
+                0 0 100px rgba(0,0,255,0.2);
+            z-index: 3;
+        }
+
+        .accretion-disk {
+            width: 400px;
+            height: 80px;
+            background: linear-gradient(90deg, 
+                #ff0000, #ff6600, #ffff00, #ffffff, #00ffff);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg) perspective(500px) rotateX(60deg);
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: rotate 10s linear infinite;
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+            z-index: 1;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform-origin: center;
+        }
+
+        .jets {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 400px;
+            animation: jetPulse 2s ease-in-out infinite;
+            z-index: 4;
+        }
+
+        .jet-north, .jet-south {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, 
+                rgba(0,255,255,0),
+                rgba(0,255,255,0.7) 50%,
+                rgba(0,255,255,0));
+        }
+
+        .jet-south {
+            transform: rotate(180deg);
+            bottom: 0;
+        }
+
+        .photon-sphere {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(255,255,0,0.3);
+            border-radius: 50%;
+            animation: rotateSphere 15s linear infinite;
+            z-index: 2;
+        }
+
+        .ergosphere {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            border: 2px dashed rgba(255,0,255,0.3);
+            border-radius: 50%;
+            animation: pulseErgosphere 4s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        .labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .label {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #4444ff;
+            font-size: 0.8em;
+            color: #00ffff;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .label:hover {
+            background: rgba(0,0,0,0.9);
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0,255,255,0.3);
+        }
+
+        .label-eh { top: 45%; left: 65%; }
+        .label-disk { top: 65%; right: 65%; }
+        .label-jet { top: 15%; left: 50%; transform: translateX(-50%); }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg) perspective(500px) rotateX(60deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) perspective(500px) rotateX(60deg); }
+        }
+
+        @keyframes particleMove {
+            0% {
+                transform: rotate(0deg) translateX(200px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(360deg) translateX(50px) rotate(-360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes jetPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes rotateSphere {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes pulseErgosphere {
+            0%, 100% { 
+                opacity: 0.3;
+                border-color: rgba(255,0,255,0.3);
+            }
+            50% { 
+                opacity: 0.6;
+                border-color: rgba(255,0,255,0.6);
+            }
+        }
+
+        /* Particle Animation Delays */
+        .particle:nth-child(1) { animation: particleMove 4s linear infinite; }
+        .particle:nth-child(2) { animation: particleMove 4s linear infinite 0.8s; }
+        .particle:nth-child(3) { animation: particleMove 4s linear infinite 1.6s; }
+        .particle:nth-child(4) { animation: particleMove 4s linear infinite 2.4s; }
+        .particle:nth-child(5) { animation: particleMove 4s linear infinite 3.2s; }
+
+    </style>   
+</head>
+<body>
+    <div class="poster">
+        <div class="title-section">
+            <h1 class="title">The Epic Journey of Stars: From Birth to Black Holes</h1>
+            <p class="subtitle">Exploring the extraordinary lifecycle of stellar objects and their ultimate fate</p>
+        </div>
+        
+        <div class="grid">
+            <div class="section">
+    <h2>Stars Beyond the Main Sequence</h2>
+    <div class="evolution-grid">
+        <div class="fact-box primary">
+            <strong>Physical Characteristics</strong>
+            <div class="property-list">
+                <div class="property">
+                    <span class="property-label">Temperature Range:</span>
+                    <div class="property-value">
+                        <span class="temp-scale" style="background: linear-gradient(90deg, #ff4400, #ffff00, #00ffff);">
+                            3,000K ← → 50,000K
+                        </span>
+                        <ul class="temp-details">
+                            <li>Red Giants: 3,000K - 4,500K</li>
+                            <li>Yellow Supergiants: 4,500K - 7,500K</li>
+                            <li>Blue Supergiants: 20,000K - 50,000K</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="property">
+                    <span class="property-label">Luminosity Range:</span>
+                    <div class="property-value">
+                        <span class="scale">0.0001 - 100,000 L☉</span>
+                        <ul class="luminosity-details">
+                            <li>Subgiants: 10-30 L☉</li>
+                            <li>Giants: 100-1,000 L☉</li>
+                            <li>Supergiants: 10,000-100,000 L☉</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="property">
+                    <span class="property-label">Size Range:</span>
+                    <div class="property-value">
+                        <span class="scale">0.01 - 1000 R☉</span>
+                        <ul class="size-details">
+                            <li>White Dwarfs: 0.01 R☉</li>
+                            <li>Giants: 10-100 R☉</li>
+                            <li>Supergiants: 100-1000 R☉</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fact-box secondary">
+            <strong>Post-Main Sequence Transitions</strong>
+            <div class="transition-stages">
+                <div class="stage">
+                    <span class="stage-number">1</span>
+                    <strong>Core Hydrogen Depletion</strong>
+                    <p>H → He fusion ceases in core when H fraction drops below 0.1%</p>
+                </div>
+                <div class="stage">
+                    <span class="stage-number">2</span>
+                    <strong>Shell Fusion Initiation</strong>
+                    <p>H fusion moves to shell around inert He core at T ≈ 20M K</p>
+                </div>
+                <div class="stage">
+                    <span class="stage-number">3</span>
+                    <strong>Core Evolution</strong>
+                    <p>Core contracts and heats while envelope expands and cools</p>
+                </div>
+                <div class="stage">
+                    <span class="stage-number">4</span>
+                    <strong>Advanced Fusion</strong>
+                    <p>He core fusion begins at T ≈ 100M K (mass dependent)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Star Mass Comparison</h2>
+    <div class="mass-comparison">
+        <div class="star-category massive">
+            <div class="star-visual">
+                <div class="star massive-star"></div>
+                <div class="star-label">High Mass Stars (>8 M☉)</div>
+            </div>
+            <div class="star-details">
+                <h3>Characteristics</h3>
+                <ul>
+                    <li><strong>Mass Range:</strong> 8-150+ M☉</li>
+                    <li><strong>Surface Temp:</strong> 20,000-50,000K</li>
+                    <li><strong>Luminosity:</strong> 10,000-1,000,000 L☉</li>
+                    <li><strong>Lifespan:</strong> 1-10 million years</li>
+                </ul>
+                <h3>Evolution Stages</h3>
+                <ol>
+                    <li>O/B Main Sequence</li>
+                    <li>Blue Supergiant</li>
+                    <li>Red Supergiant</li>
+                    <li>Supernova</li>
+                    <li>Neutron Star/Black Hole</li>
+                </ol>
+                <div class="fact-highlight">
+                    Creates most heavy elements through supernova nucleosynthesis
+                </div>
+            </div>
+        </div>
+
+        <div class="star-category small">
+            <div class="star-visual">
+                <div class="star small-star"></div>
+                <div class="star-label">Low Mass Stars (<8 M☉)</div>
+            </div>
+            <div class="star-details">
+                <h3>Characteristics</h3>
+                <ul>
+                    <li><strong>Mass Range:</strong> 0.08-8 M☉</li>
+                    <li><strong>Surface Temp:</strong> 2,500-6,000K</li>
+                    <li><strong>Luminosity:</strong> 0.0001-50 L☉</li>
+                    <li><strong>Lifespan:</strong> 10-1000 billion years</li>
+                </ul>
+                <h3>Evolution Stages</h3>
+                <ol>
+                    <li>G/K/M Main Sequence</li>
+                    <li>Red Giant</li>
+                    <li>Horizontal Branch</li>
+                    <li>Asymptotic Giant</li>
+                    <li>White Dwarf</li>
+                </ol>
+                <div class="fact-highlight">
+                    Primary source of carbon and nitrogen in universe
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.evolution-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.property-list {
+    display: grid;
+    gap: 15px;
+}
+
+.property {
+    background: rgba(0,0,50,0.3);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.property-label {
+    color: #00ffff;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.temp-scale {
+    display: block;
+    height: 20px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.scale {
+    color: #ffaa00;
+    font-weight: bold;
+}
+
+.transition-stages {
+    display: grid;
+    gap: 15px;
+}
+
+.stage {
+    position: relative;
+    padding-left: 40px;
+    background: rgba(0,0,50,0.3);
+    padding: 15px 15px 15px 40px;
+    border-radius: 8px;
+}
+
+.stage-number {
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background: #00ffff;
+    color: #000033;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.mass-comparison {
+    display: grid;
+    gap: 30px;
+}
+
+.star-category {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    background: rgba(0,0,50,0.3);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.star-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.star-details {
+    display: grid;
+    gap: 15px;
+}
+
+.fact-highlight {
+    background: rgba(0,255,255,0.1);
+    border-left: 4px solid #00ffff;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 0 8px 8px 0;
+}
+
+.star-details h3 {
+    color: #00ffff;
+    margin: 10px 0 5px 0;
+}
+
+.star-details ul, .star-details ol {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.star-details li {
+    margin: 5px 0;
+}
+</style>
+
+            <div class="section">
+    <h2>Evolution of Massive Stars</h2>
+    <div class="timeline">
+        <div class="timeline-item" style="counter-increment: step; position: relative;">
+            <strong>Main Sequence Phase</strong><br>
+            <span style="color: #ff6600">Temperature: ~15-40 million K</span><br>
+            Intense core hydrogen fusion via CNO cycle. Extremely luminous blue-white stars.<br>
+            <span style="color: #00ffff; font-style: italic">Duration: 3-20 million years</span>
+        </div>
+
+        <div class="timeline-item">
+            <strong>Hydrogen Shell Burning</strong><br>
+            <span style="color: #ff6600">Core Temperature: ~50 million K</span><br>
+            Core depletes, shell burning begins. Star expands into red supergiant.<br>
+            <span style="color: #00ffff; font-style: italic">Duration: ~500,000 years</span>
+        </div>
+
+        <div class="timeline-item">
+            <strong>Helium Core Fusion</strong><br>
+            <span style="color: #ff6600">Temperature: ~170 million K</span><br>
+            Triple-alpha process produces carbon and oxygen. Shell hydrogen burning continues.<br>
+            <span style="color: #00ffff; font-style: italic">Duration: ~500,000 years</span>
+        </div>
+
+        <div class="timeline-item">
+            <strong>Advanced Nuclear Burning</strong><br>
+            Sequential fusion stages:<br>
+            - Carbon: <span style="color: #ff6600">600M K</span> (<span style="color: #00ffff">~600 years</span>)<br>
+            - Neon: <span style="color: #ff6600">1.2B K</span> (<span style="color: #00ffff">~1 year</span>)<br>
+            - Oxygen: <span style="color: #ff6600">1.5B K</span> (<span style="color: #00ffff">~6 months</span>)<br>
+            - Silicon: <span style="color: #ff6600">2.7B K</span> (<span style="color: #00ffff">~1 day</span>)
+        </div>
+
+        <div class="timeline-item">
+            <strong>Iron Core Formation</strong><br>
+            <span style="color: #ff6600">Temperature: ~3.5 billion K</span><br>
+            Iron fusion becomes endothermic. Core continues contracting.<br>
+            <span style="color: #00ffff; font-style: italic">Final hours of stellar life</span>
+        </div>
+
+        <div class="timeline-item">
+            <strong>Core Collapse</strong><br>
+            <span style="color: #ff6600">Temperature: ~100 billion K</span><br>
+            Iron core reaches Chandrasekhar limit. Collapse at 23% light speed.<br>
+            <span style="color: #00ffff; font-style: italic">Duration: < 1 second</span>
+        </div>
+
+        <div class="timeline-item">
+            <strong>Supernova Explosion</strong><br>
+            <span style="color: #ff6600">Shock Temperature: ~5 billion K</span><br>
+            Core bounce, neutrino emission, r-process nucleosynthesis.<br>
+            <span style="color: #00ffff; font-style: italic">Visible for weeks to months</span>
+        </div>
+
+        <div class="timeline-item">
+            <strong>Remnant Formation</strong><br>
+            Final outcome based on initial mass:<br>
+            - 8-20 solar masses → Neutron star<br>
+            - >20 solar masses → Black hole<br>
+            <span style="color: #00ffff; font-style: italic">Heavy elements dispersed into space</span>
+        </div>
+    </div>
+
+    <div class="fact-box">
+        <strong>Key Features of Massive Star Evolution:</strong>
+        <ul>
+            <li>Fusion proceeds to iron unlike lower mass stars</li>
+            <li>Temperature increases exponentially in later stages</li>
+            <li>Final stages occur increasingly rapidly</li>
+            <li>Responsible for creating most heavy elements in universe</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.timeline-item {
+    position: relative;
+    padding: 20px;
+    margin: 15px 0;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    border-left: 4px solid #00ffff;
+}
+
+.timeline-item::before {
+    content: counter(step);
+    counter-increment: step;
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background: #00ffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000033;
+    font-weight: bold;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 40px;
+    counter-reset: step;
+}
+</style>
+
+           <div class="section">
+    <h2>Black Hole Anatomy</h2>
+    <div class="blackhole-container interactive-element">
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="jets">
+            <div class="jet-north"></div>
+            <div class="jet-south"></div>
+        </div>
+        <div class="ergosphere"></div>
+        <div class="photon-sphere"></div>
+        <div class="blackhole"></div>
+        <div class="accretion-disk"></div>
+        <div class="labels">
+            <div class="label label-eh">Event Horizon</div>
+            <div class="label label-disk">Accretion Disk</div>
+            <div class="label label-jet">Relativistic Jets</div>
+        </div>
+    </div>
+    <ul>
+        <li><span class="highlight">Event Horizon:</span> Point of no return, where escape velocity equals speed of light</li>
+        <li><span class="highlight">Singularity:</span> Central point of infinite density and spacetime curvature</li>
+        <li><span class="highlight">Accretion Disk:</span> Superheated matter spiraling into black hole, reaching millions of degrees</li>
+        <li><span class="highlight">Ergosphere:</span> Region where space-time is dragged along with black hole's rotation</li>
+        <li><span class="highlight">Photon Sphere:</span> Where light can orbit the black hole in unstable circular paths</li>
+        <li><span class="highlight">Relativistic Jets:</span> High-energy particle streams ejected along magnetic field lines</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Light Near Black Holes</h2>
+    <div class="light-effects-grid">
+        <div class="effect-card">
+            <h3>Gravitational Lensing</h3>
+            <div class="effect-details">
+                <div class="effect-value">
+                    <span class="highlight">Deflection Angle: θ = 4GM/c²r</span>
+                </div>
+                <ul class="effect-list">
+                    <li>Light bends twice Einstein's prediction at event horizon</li>
+                    <li>Multiple images of same object possible</li>
+                    <li>Einstein ring forms at perfect alignment</li>
+                    <li>Maximum bending at photon sphere (1.5 × Schwarzschild radius)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="effect-card">
+            <h3>Gravitational Redshift</h3>
+            <div class="effect-details">
+                <div class="effect-value">
+                    <span class="highlight">z = 1/√(1 - 2GM/rc²) - 1</span>
+                </div>
+                <ul class="effect-list">
+                    <li>Wavelength stretching proportional to gravity</li>
+                    <li>Infinite redshift at event horizon</li>
+                    <li>Energy decreases with distance from source</li>
+                    <li>Affects all electromagnetic radiation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="effect-card">
+            <h3>Photon Sphere</h3>
+            <div class="effect-details">
+                <div class="effect-value">
+                    <span class="highlight">Radius = 1.5 × Schwarzschild radius</span>
+                </div>
+                <ul class="effect-list">
+                    <li>Unstable circular photon orbits</li>
+                    <li>Critical impact parameter = 3√3 GM/c²</li>
+                    <li>Defines black hole's visual boundary</li>
+                    <li>Key to black hole shadow formation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="effect-card">
+            <h3>Light Absorption</h3>
+            <div class="effect-details">
+                <div class="effect-value">
+                    <span class="highlight">Absorption cross-section ∝ 16πG²M²/c⁴</span>
+                </div>
+                <ul class="effect-list">
+                    <li>Complete absorption beyond event horizon</li>
+                    <li>Partial absorption in accretion disk</li>
+                    <li>Quantum tunneling enables Hawking radiation</li>
+                    <li>Temperature = ℏc³/8πGMk</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Time Dilation Effects</h2>
+    <div class="time-dilation-container">
+        <div class="primary-equation">
+            <span class="equation-label">Gravitational Time Dilation:</span>
+            <span class="equation">t' = t/√(1 - 2GM/rc²)</span>
+        </div>
+        
+        <div class="dilation-effects">
+            <div class="effect-column">
+                <h3>Distance-Based Effects</h3>
+                <ul>
+                    <li><strong>At 2× Schwarzschild radius:</strong> 1.41× slower</li>
+                    <li><strong>At 3× Schwarzschild radius:</strong> 1.22× slower</li>
+                    <li><strong>At 10× Schwarzschild radius:</strong> 1.05× slower</li>
+                    <li><strong>At Event Horizon:</strong> Time stops relative to distant observer</li>
+                </ul>
+            </div>
+            
+            <div class="effect-column">
+                <h3>Observable Phenomena</h3>
+                <ul>
+                    <li>Redshift of electromagnetic radiation</li>
+                    <li>Apparent freezing of infalling objects</li>
+                    <li>Decreased frequency of periodic signals</li>
+                    <li>Gravitational lensing enhancement</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="relativistic-effects">
+            <h3>Combined Relativistic Effects</h3>
+            <div class="effects-grid">
+                <div class="effect-item">
+                    <strong>Gravitational + Velocity Dilation</strong>
+                    <p>t' = t × √(1-v²/c²)/√(1-2GM/rc²)</p>
+                </div>
+                <div class="effect-item">
+                    <strong>Frame Dragging</strong>
+                    <p>Additional time dilation due to rotating black holes</p>
+                </div>
+                <div class="effect-item">
+                    <strong>Proper Time</strong>
+                    <p>Local time for infalling observer differs from distant observer</p>
+                </div>
+                <div class="effect-item">
+                    <strong>Horizon Effects</strong>
+                    <p>Infinite time dilation at event horizon (external view)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.light-effects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.effect-card {
+    background: rgba(0,0,50,0.3);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid rgba(0,255,255,0.2);
+}
+
+.effect-card h3 {
+    color: #00ffff;
+    margin-top: 0;
+    border-bottom: 1px solid rgba(0,255,255,0.2);
+    padding-bottom: 10px;
+}
+
+.effect-value {
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-family: monospace;
+}
+
+.effect-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.effect-list li {
+    margin: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.effect-list li::before {
+    content: '•';
+    color: #00ffff;
+    position: absolute;
+    left: 0;
+}
+
+.time-dilation-container {
+    display: grid;
+    gap: 20px;
+}
+
+.primary-equation {
+    background: rgba(0,0,50,0.3);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.equation-label {
+    display: block;
+    color: #00ffff;
+    margin-bottom: 10px;
+}
+
+.equation {
+    font-family: monospace;
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.dilation-effects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.effect-column {
+    background: rgba(0,0,50,0.3);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.effect-column h3 {
+    color: #00ffff;
+    margin-top: 0;
+}
+
+.relativistic-effects {
+    background: rgba(0,0,50,0.3);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.effects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.effect-item {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.effect-item strong {
+    color: #00ffff;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.effect-item p {
+    margin: 0;
+}
+</style>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
